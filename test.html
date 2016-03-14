@@ -1,0 +1,104 @@
+<html>
+
+<head>
+  <title>Performance Monitoring Benchmarks</title>
+  <script type="text/javascript"> </script>
+  <script src="react/react.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="datetimepicker_css.js"></script>
+  <script src="react/JSXTransformer.js"></script>
+  <script src="grommet/grommet.min.js"></script>
+    <style>
+        .center {
+            margin: auto;
+            width: 60%;
+            border: 3px solid #73AD21;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div id="container" class="center" >
+    <!-- This element's contents will be replaced with your component. -->
+</div>
+<script type="text/jsx">
+    var Form = React.createClass({
+        getInitialState() {
+            return {
+                first_name: "Goutam",
+                last_name: "Adwant",
+                start_time: "03/11/2016",
+                end_time: "04/11/2016",
+            };
+        },
+
+        setFirstName(event) {
+            this.setState({first_name: event.target.value});
+        },
+
+        setLastName(event) {
+            this.setState({last_name: event.target.value});
+        },
+
+        setStartTime() {
+            this.setState({start_time: document.getElementById('demo1').value});
+        },
+        populateDate(){
+            NewCssCal('demo1','yyyyMMdd','dropdown',true,'24',true);
+
+        },
+        populateDate1(){
+            NewCssCal('demo2','yyyyMMdd','dropdown',true,'24',true);
+
+        },
+        componentDidMount(){
+            document.getElementById('demo1').onchange= this.setStartTime;
+            document.getElementById('demo2').onchange= this.setEndTime;
+        },
+        setEndTime() {
+            this.setState({end_time: document.getElementById('demo2').value});
+        },
+
+        handleSubmit(event) {
+            event.preventDefault();
+            var data = this.state;
+            $.ajax({
+                type: "GET",
+                //crossDomain: true,
+                url: "http://localhost:8082/PFT/login.php",
+                data: data,
+                success: function(data){
+                    alert(data);
+                    //$('#resultip').html(data);
+                },
+                error:function(data)
+                {
+                    alert("Data sending failed");
+                }
+            });
+        },
+
+        render() {
+            return (
+                    <form onSubmit={this.handleSubmit}>
+                        <input value={this.state.first_name} onChange={this.setFirstName} placeholder="First name"/> <br/>
+                        <input value={this.state.last_name} onChange={this.setLastName} placeholder="Last name"/> <br/>
+                        <input value={this.state.start_time} onChange={this.setStartTime} placeholder="Start Time" id="demo1" name="stime"/>
+                        <img src="images2/calender.JPG" onClick={this.populateDate} /> <br/>
+                        <input value={this.state.end_time} onChange={this.setEndTime} placeholder="End Time" id="demo2" name="etime"/>
+                        <img src="images2/calender.JPG" onClick={this.populateDate1} /> <br/>
+                        <button type="submit">Submit</button>
+                    </form>
+
+            )
+        }
+    });
+
+    React.render(<Form />, document.getElementById('container'));
+</script>
+</body>
+</html>

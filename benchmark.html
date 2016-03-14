@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Performance Monitoring Benchmarks</title>
+    <link href='grommet/css/grommet-hpe.min.css' rel='stylesheet' type='text/css'>
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <script type="text/javascript">
+    if(!Array.isArray || !Object.create) {
+      window.location.replace("noscript.html");
+    }
+    </script>
+    <script src="react/react.js"></script>
+    <script src="react/JSXTransformer.js"></script>
+    <script src="grommet/grommet.min.js"></script>
+
+    <style>
+
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Regular.woff") format('woff');
+      }
+
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Bold.woff") format('woff');
+        font-weight: 700;
+      }
+
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Semibold.woff") format('woff');
+        font-weight: 600;
+      }
+
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Light.woff") format('woff');
+        font-weight: 100;
+      }
+      p {
+        margin-top: 12px;
+        margin-bottom: 12px;
+      }
+      code, kbd, pre, samp {
+        font-family: monospace, monospace;
+        font-size: 0.8em;
+      }
+      a .control-icon-troubleshooting {
+        width: 36px;
+        height: 36px;
+        margin-left: 10px;
+      }
+      .moreinfo {
+    display: inline-block;
+}
+    </style>
+
+  </head>
+<body>
+  <div id="content"></div>
+  <script type="text/jsx">
+    var Box = Grommet.Box;
+    var Title = Grommet.Title;
+    var Header = Grommet.Header;
+    var Layer = Grommet.Layer;
+    var Section = Grommet.Section;
+    var Calendar = Grommet.Calendar;
+    var Footer = Grommet.Footer;
+    var Sidebar = Grommet.Sidebar;
+    var Menu = Grommet.Menu;
+    var FullForm = Grommet.FullForm;
+    var FormField = Grommet.FormField;
+    var Anchor = Grommet.Anchor;
+    var Form = Grommet.Form;
+    var Button = Grommet.Button;
+    var FormFields = Grommet.FormFields;
+    var DesktopIcon = Grommet.Icons.Base.Desktop;
+    var CommandLineIcon =  Grommet.Icons.Base.CommandLine;
+    var DocumentUserIcon = Grommet.Icons.Base.DocumentUser;
+    var NotesIcon = Grommet.Icons.Base.Notes;
+    var TroubleshootingIcon = Grommet.Icons.Base.Troubleshooting;
+    var LinkIcon = Grommet.Icons.Base.Link;
+    var AnnouncementIcon = Grommet.Icons.Base.Announcement;
+
+    var Form = React.createClass({
+    	handleSubmit(event) {
+      	event.preventDefault();
+        alert("running");
+      },
+
+    	render() {
+      	return (
+        	<form onSubmit={this.handleSubmit}>
+          	First Name : <input type = "number" id="demo1" />
+            Second Name : <input type = "number" id="demo2" />
+          	<button type="submit">Submit</button>
+          </form>
+        )
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    var App = React.createClass({
+
+      getInitialState: function () {
+        return {
+          active: false,
+          align: 'right'
+        };
+      },
+
+      _onOpen: function (align) {
+        this.setState({active: true, align: align});
+      },
+
+      _onClose: function (event) {
+        if (event) {
+          event.preventDefault();
+        }
+        this.setState({active: false});
+      },
+
+      render: function() {
+
+        var title = "Performance Monitoring Benchmark - Add Test Details";
+
+        return (
+          <Grommet.App centered={false}>
+            <Header direction="row" align="center" size="large" pad={{horizontal: 'large'}} colorIndex="grey-1">
+              <img height="120px" src="img/hpe_pri_grn_rev_rgb.svg" />
+              <Title>{title}</Title>
+            </Header>
+
+            <Box direction="row" justify="left" pad={{vertical: 'medium'}}>
+
+
+
+
+
+
+<Box pad={{horizontal: 'large'}} full='false'>
+<Sidebar colorIndex="light-2">
+  <Header pad={{horizontal: 'medium'}}>
+    <Title>Cluster Information</Title>
+  </Header>
+  <Menu primary={true}>
+    <Anchor href="index.html">Dashboard</Anchor>
+    <Anchor>Tests</Anchor>
+    <Anchor href="testinstance.html">Test Instance</Anchor>
+    <Anchor>Test Sequences</Anchor>
+    <Anchor>Test Results</Anchor>
+    <Anchor>Settings</Anchor>
+  </Menu>
+</Sidebar>
+</Box>
+<Box direction="row" justify="center" pad={{vertical: 'medium'}}>
+
+<Form />
+
+</Box>
+</Box>
+
+
+
+
+
+
+              <Box pad={{horizontal: 'large'}} colorIndex="neutral-1">
+              <Header>
+                <Title>Resources</Title>
+              </Header>
+              <p style={{maxWidth: 'none'}}>
+                <LinkIcon colorIndex="brand"/><a href="http://hpe.com/info/icmu" target="_blank">Insight CMU Web Site</a> for up-to-date documentation, select Technical Support/Manuals.<br />
+                <AnnouncementIcon colorIndex="brand"/><a href="http://community.hpe.com/t5/HPE-Insight-Cluster-Management/bd-p/itrc-1555" target="_blank">Insight CMU public forum</a> for patch announcements and other discussions.
+              </p>
+            </Box>
+            <Footer appCentered={true} direction="column" align="center" pad="small" colorIndex="grey-1">
+              <p>&copy; 2016 Hewlett Packard Enterprise Development LP</p>
+            </Footer>
+
+
+          </Grommet.App>
+        );
+      }
+    });
+
+    var element = document.getElementById('content');
+    React.render(React.createElement(App), element);
+    </script>
+
+  </body>
+</html>

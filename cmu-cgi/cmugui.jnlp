@@ -1,0 +1,33 @@
+#!/bin/bash
+#get cmu configuration 
+
+. /opt/cmu/etc/cmuserver.conf || exit 1 
+echo 'Content-Type: application/x-java-jnlp-file
+
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" codebase="http://'"${HTTP_HOST}:${SERVER_PORT}"'">
+	<information>
+		<title>HP Insight Cluster Management Utility</title>
+		<vendor>HP</vendor>
+		<homepage href="http://www.hp.com/go/cmu"/>
+		<offline-allowed/>
+	</information>
+	
+	<resources>
+		<jar href="cmugui_standalone.jar"/>
+	</resources>
+	
+	<!-- settings -->
+	<resources>
+		<j2se version="1.7+" max-heap-size="'"${CMU_GUI_MB}"'m" href="http://java.sun.com/products/autodl/j2se"/>
+	</resources>
+	<security>
+		<all-permissions/>
+	</security>
+	<application-desc main-class="com.hp.cmu.gui.view.SplashScreen">
+		<argument>CMUServerIP='"${HTTP_HOST}"'</argument>
+		<argument>CMUServerPort='"${CMU_RMI_PORT}"'</argument>
+		<argument>debug='"${CMU_GUI_DEBUG}"'</argument>
+		<argument>3Ddebug='"${CMU_GUI_3D_DEBUG}"'</argument>
+	</application-desc>
+</jnlp>'

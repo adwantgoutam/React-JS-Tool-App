@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Insight Cluster Management Utility v8.0.rc2.guys.branch.160223.152606.04c445</title>
+    <link href='grommet/css/grommet-hpe.min.css' rel='stylesheet' type='text/css'>
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <script type="text/javascript">
+    if(!Array.isArray || !Object.create) {
+      window.location.replace("noscript.html");
+    }
+    </script>
+    <script src="react/react.js"></script>
+    <script src="react/JSXTransformer.js"></script>
+    <script src="grommet/grommet.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Regular.woff") format('woff');
+      }
+
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Bold.woff") format('woff');
+        font-weight: 700;
+      }
+
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Semibold.woff") format('woff');
+        font-weight: 600;
+      }
+
+      @font-face {
+        font-family: "Metric";
+        src: url("grommet/font/MetricWeb-Light.woff") format('woff');
+        font-weight: 100;
+      }
+      p {
+        margin-top: 12px;
+        margin-bottom: 12px;
+      }
+      code, kbd, pre, samp {
+        font-family: monospace, monospace;
+        font-size: 0.8em;
+      }
+      a .control-icon-troubleshooting {
+        width: 36px;
+        height: 36px;
+        margin-left: 10px;
+      }
+      /* workaround for graph shaking when digit number changes */
+      .meter {
+        min-width: 475px;
+      }
+      /* workaround for legend wrapped with 4 digit */
+      .legend__item-value {
+        min-width: 85px;
+      }
+    </style>
+  </head>
+<body>
+  <div id="content"></div>
+  <script type="text/jsx">
+    var Box = Grommet.Box;
+    var Title = Grommet.Title;
+    var Header = Grommet.Header;
+    var Layer = Grommet.Layer;
+    var Section = Grommet.Section;
+    var Footer = Grommet.Footer;
+
+    var DesktopIcon = Grommet.Icons.Base.Desktop;
+    var CommandLineIcon =  Grommet.Icons.Base.CommandLine;
+    var DocumentUserIcon = Grommet.Icons.Base.DocumentUser;
+    var NotesIcon = Grommet.Icons.Base.Notes;
+    var TroubleshootingIcon = Grommet.Icons.Base.Troubleshooting;
+    var LinkIcon = Grommet.Icons.Base.Link;
+    var AnnouncementIcon = Grommet.Icons.Base.Announcement;
+
+    function getLabel(label, count, colorIndex) {
+      return {
+        "label": label,
+        "value": count,
+        "colorIndex": colorIndex
+      };
+    }
+
+    var TodoAppDashboard = React.createClass({
+
+      _onResponse: function (err, res) {
+        if (res.ok) {
+          /*
+           * Handling superagent issue setting body to null, see more here:
+           * https://github.com/visionmedia/superagent/pull/638
+           */
+          var body = res.body;
+          if (body === null) {
+            body = JSON.parse(res.text);
+          }
+          this.setState({statusMap: body});
+        }
+      },
+
+      _getData: function () {
+        Grommet.Rest.get('status.json').set('Access-Control-Allow-Origin', '*').set('Accept', 'application/json').end(this._onResponse);
+      },
+
+      shouldComponentUpdate: function (nextProps, nextState) {
+        return nextState.statusMap.down !== this.state.statusMap.down
+          || nextState.statusMap.unknown !== this.state.statusMap.unknown
+          || nextState.statusMap.up !== this.state.statusMap.up;
+      },
+
+      getInitialState: function () {
+        this.timer = setInterval(this._getData, 1000);
+        this._getData();
+        return {
+          statusMap: {
+            down: 0,
+            unknown: 0,
+            up: 0
+          }
+        };
+      },
+
+      render: function () {
+        return (
+          <Grommet.Meter series={[
+            getLabel('Down', this.state.statusMap.down, 'error'),
+            getLabel('Unknown', this.state.statusMap.unknown, 'warning'),
+            getLabel('Up', this.state.statusMap.up, 'ok')
+          ]} type="arc" legend={true} vertical={true} units="Nodes"/>
+        );
+      }
+    });
+
+    var App = React.createClass({
+
+      getInitialState: function () {
+        return {
+          active: false,
+          align: 'right'
+        };
+      },
+
+      _onOpen: function (align) {
+        this.setState({active: true, align: align});
+      },
+
+      _onClose: function (event) {
+        if (event) {
+          event.preventDefault();
+        }
+        this.setState({active: false});
+      },
+
+      render: function() {
+
+        var activeLayer = null;
+        if (this.state.active) {
+          activeLayer = (
+            <Layer onClose={this._onClose} closer={true} flush={false} align={this.state.align} >
+                <Header>
+                  <h3>Unable to launch Insight CMU GUI?</h3>
+                </Header>
+                  <p>Insight CMU GUI requires a Java&#8482; runtime environment (JRE). If a JRE is not present on the machine
+                  running this browser, install one and restart the browser before trying to launch the Insight CMU GUI.</p>
+
+                  <p><strong>If you continue to face problems with launching GUI even after installing the JRE, try
+                  the following steps to manually launch Insight CMU GUI from the command line: </strong></p>
+
+                  <p>1) Download the Insight CMU GUI jar file to a folder (eg: <code>/tmp</code>  or <code>C:\cmugui</code>) by
+                     right-clicking <a href='cmugui_standalone.jar'><strong>here</strong></a> and select "Save Link as" option from the context menu</p>
+
+                  <p>2) From the command line, execute the downloaded jar file to launch the GUI.<br />
+                        Linux example:<br />
+                        <code>java  -jar -Xmx1024M  /tmp/cmugui_standalone.jar</code><br />
+                        Windows example:<br />
+                        <code>java  -jar -Xmx1024M  "C:\cmugui\cmugui_standalone.jar"</code></p>
+
+                  <p>NOTE: If the <code>java</code> binary is not in PATH, then specify the full path of the java binary
+                  Eg: <code>"C:\Program Files (x86)\Java\jre7\bin\java.exe" -jar -Xmx1024M "C:\cmugui\cmugui_standalone.jar"</code></p>
+            </Layer>
+          );
+        }
+
+        var title = "Insight Cluster Management Utility v8.0.rc2.guys.branch.160223.152606.04c445";
+
+        return (
+          <Grommet.App centered={false}>
+            <Header direction="row" align="center" size="large" pad={{horizontal: 'large'}} colorIndex="grey-1">
+              <img height="120px" src="img/hpe_pri_grn_rev_rgb.svg" />
+              <Title>{title}</Title>
+            </Header>
+            <Box direction="row" justify="center" pad={{vertical: 'medium'}}>
+              <Box pad={{horizontal: 'large'}} separator="right">
+                <Header>
+                  <Title>Using Insight CMU</Title>
+                </Header>
+                <p>
+                  <DesktopIcon colorIndex="brand"/><a href="./cmu-cgi/cmugui.jnlp">Launch Insight Cluster Management Utility GUI</a>
+                  <a onClick={this._onOpen.bind(this, 'right')} class="troubleshoot"><TroubleshootingIcon/></a><br />
+                  <DocumentUserIcon colorIndex="brand"/><a href="./CMU_Users_Guide.pdf" target="_blank">Insight CMU User Guide</a><br />
+                  <NotesIcon colorIndex="brand"/><a href="./ReleaseNotes.pdf" target="_blank">Insight CMU Release Notes</a><br />
+                </p>
+                <p>
+                  <TroubleshootingIcon colorIndex="brand"/><a href="#" onClick={this._onOpen.bind(this, 'right')}>Unable to launch Insight CMU GUI?</a><br />
+                  {activeLayer}
+                </p>
+              </Box>
+              <Box pad={{horizontal: 'large'}}>
+                <Header>
+                  <Title>Cluster status</Title>
+                </Header>
+                <TodoAppDashboard />
+              </Box>
+            </Box>
+              <Box pad={{horizontal: 'large'}} colorIndex="neutral-1">
+              <Header>
+                <Title>Resources</Title>
+              </Header>
+              <p style={{maxWidth: 'none'}}>
+                <LinkIcon colorIndex="brand"/><a href="http://hpe.com/info/icmu" target="_blank">Insight CMU Web Site</a> for up-to-date documentation, select Technical Support/Manuals.<br />
+                <AnnouncementIcon colorIndex="brand"/><a href="http://community.hpe.com/t5/HPE-Insight-Cluster-Management/bd-p/itrc-1555" target="_blank">Insight CMU public forum</a> for patch announcements and other discussions.
+              </p>
+            </Box>
+            <Footer appCentered={true} direction="column" align="center" pad="small" colorIndex="grey-1">
+              <p>&copy; 2016 Hewlett Packard Enterprise Development LP</p>
+            </Footer>
+          </Grommet.App>
+        );
+      }
+    });
+
+    var element = document.getElementById('content');
+    React.render(React.createElement(App), element);
+    </script>
+  </body>
+</html>
